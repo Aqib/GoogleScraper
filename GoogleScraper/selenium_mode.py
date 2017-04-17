@@ -12,6 +12,7 @@ import sys
 import os
 
 try:
+    from pyvirtualdisplay import Display
     from selenium import webdriver
     from selenium.common.exceptions import TimeoutException, WebDriverException
     from selenium.common.exceptions import ElementNotVisibleException
@@ -127,11 +128,11 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             proxy: Optional, if set, use the proxy to route all scrapign through it.
             browser_num: A unique, semantic number for each thread.
         """
+
         self.search_input = None
 
         threading.Thread.__init__(self)
         SearchEngineScrape.__init__(self, config, *args, **kwargs)
-
         self.browser_type = self.config.get('sel_browser', 'chrome').lower()
         self.browser_num = browser_num
         self.captcha_lock = captcha_lock
@@ -214,6 +215,8 @@ class SelScrape(SearchEngineScrape, threading.Thread):
 
     def _get_Chrome(self):
         try:
+            display = Display(visible=0, size=(800, 600))
+            display.start()
             if self.proxy:
                 chrome_ops = webdriver.ChromeOptions()
                 chrome_ops.add_argument(
